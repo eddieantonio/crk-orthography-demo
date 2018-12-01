@@ -1,4 +1,4 @@
-Demo for [eddieantonio/cree-sro-syllabics]
-=======================================
+Moved!
+======
 
-[eddieantonio/cree-sro-syllabics]: https://github.com/eddieantonio/cree-sro-syllabics
+See [syllabics.app](https://github.com/eddieantonio/syllabics.app).
