@@ -17,64 +17,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import json
-
-from quart import Quart, websocket, render_template, url_for
-from cree_sro_syllabics import (
-    sro2syllabics, syllabics2sro, __version__ as library_version
-)
+from quart import Quart, redirect
 
 app = Quart(__name__)
 
 
 @app.route('/')
-async def hello():
-    return await render_template('index.html',
-                                 library_version=library_version)
-
-
-@app.websocket('/ws')
-async def ws():
-    """
-    A Websocket endpoint that calls the appropriate cree_sro_syllabics function
-    """
-    while True:
-        data = await websocket.receive()
-        await websocket.send(handle_request(data))
-
-
-def handle_request(raw_data):
-    if len(raw_data) > 1024:
-        return json.dumps({'error': 'message too long'})
-
-    try:
-        parsed_data = json.loads(raw_data)
-        raw_response = _handle_request(parsed_data)
-        response = json.dumps(raw_response)
-    except Exception:
-        app.logger.exception(f"Error on message {raw_data!r}")
-        return json.dumps({'error': 'bad message'})
-    else:
-        return response
-
-
-def _handle_request(data):
-    """
-    Handles the actual request.
-    """
-    if 'sro' in data:
-        return {'syl': sro2syllabics(data['sro'])}
-    elif 'syl' in data:
-        macrons = bool(data.get('macrons'))
-        return {'sro': syllabics2sro(data['syl'], produce_macrons=macrons)}
-    else:
-        return {'error': 'invalid request'}
-
-
-@app.template_filter('static_url')
-def static_url(filename):
-    return url_for('static', filename=filename)
-
+async def home():
+    return redirect('https://syllabics.app/', status_code=301)
 
 if __name__ == '__main__':
     app.run()
